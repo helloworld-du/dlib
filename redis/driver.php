@@ -58,7 +58,7 @@ class redis_driver {
 				$this->_oMaster->connect($aAddr["socket"]);
 			}
 		} catch (\Exception $e){
-			Throw new \Exception(sprintf('REDIS_CNN_ERR host:%s port%d', $aAddr['host'], $aAddr['port']));
+			Throw new \Exception(sprintf('REDIS_CNN_ERR host:%s port:%d', $aAddr['host'], $aAddr['port']));
 		}
 	}
 }
