@@ -47,12 +47,13 @@ class redis_driver {
 
 	protected function _connect() {
 		$aAddr = $this->getAddr();
+		$aAddr += ['timeout' => 0.0];
 		try{
 			if (empty($aAddr["socket"])) {
 				$this->_oMaster->connect(
 					$aAddr['host'],
 					$aAddr['port'],
-					$aAddr['timeout'] ? 0 : $aAddr['timeout']
+					$aAddr['timeout']
 				);
 			} else {
 				$this->_oMaster->connect($aAddr["socket"]);
