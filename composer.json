@@ -1,4 +1,18 @@
 {
+
+  	"name": "helloworld_du/dlib",
+  	"license": "MIT",
+  	"description": "Dusc's lib",
+  	"homepage": "https://github.com/helloworld-du/dlib",
+  	"authors": [
+		{
+		  	"name": "helloworld_du",
+	  		"email": "dushengchen@gmail.com",
+	  		"homepage": "https://github.com/helloworld-du",
+	  		"role": "Developer"
+		}
+  	],
+
 	"require": {
 		"hassankhan/config": "*"
 	},
