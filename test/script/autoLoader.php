@@ -6,4 +6,5 @@
  * Time: 下午6:01
  */
 require __DIR__.'/../../common.inc.php';
-var_dump($res = require LIB_ROOT.'vendor/composer/autoload_psr4.php');
+$loader = new \Composer\Autoload\ClassLoader();
+var_dump($loader->getPrefixes(), $loader->getClassMap());
