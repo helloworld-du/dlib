@@ -12,7 +12,7 @@ require LIB_ROOT.'vendor/autoload.php';
 use Composer\Autoload\ClassLoader;
 
 $loader = new \Composer\Autoload\ClassLoader();
-$loader->add('dlib', __DIR__);
+$loader->add('dlib\\', __DIR__);
 // activate the autoloader
 $loader->register();
  // to enable searching the include path (eg. for PEAR packages)
