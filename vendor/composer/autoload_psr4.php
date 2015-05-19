@@ -6,5 +6,6 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
 
 return array(
+    'dlib\\' => array($baseDir . '/'),
     'Noodlehaus\\' => array($vendorDir . '/hassankhan/config/src'),
 );

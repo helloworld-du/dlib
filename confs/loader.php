@@ -5,9 +5,9 @@
  * Date: 15/5/18
  * Time: 下午5:50
  */
-namespace dlib;
+namespace dlib\confs;
 
-class confs_loader {
+class Loader {
 
 	static protected $_sBaseDir;
 	static protected $_cache = [];

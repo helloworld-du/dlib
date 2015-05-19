@@ -12,7 +12,9 @@
 	  		"role": "Developer"
 		}
   	],
-
+	"autoload": {
+	  	"psr-4": {"dlib\\" : ""}
+	},
 	"require": {
 		"hassankhan/config": "*"
 	},

@@ -5,9 +5,10 @@
  * Date: 15/5/18
  * Time: 下午6:49
  */
-namespace dlib;
+namespace dlib\redis;
+use dlib\confs\Loader;
 
-class redis_driver {
+class Driver {
 
 
 	protected $_oMaster = null;
@@ -24,7 +25,7 @@ class redis_driver {
 			return $this->_aAddr;
 		}
 		if (is_string($this->_aAddr)) {
-			$conf = confs_loader::get('redis.'.$this->_aAddr);
+			$conf = Loader::get('redis.'.$this->_aAddr);
 			if ($conf && is_array($conf)) {
 				return $this->_aAddr = $conf;
 			}
