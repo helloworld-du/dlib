@@ -12,4 +12,4 @@ before_script:
   - phpenv config-add php_conf_test.ini
 
 script:
-  - phpunit test/unit/
+  - phpunit --bootstrap Commen.inc.php test/unit/
