@@ -12,5 +12,5 @@ before_script:
   - phpenv config-add php_conf_test.ini
 
 script:
-  - phpunit --bootstrap Commen.inc.php test/unit/
+  - phpunit --bootstrap common.inc.php test/unit/
   - php test/script/autoLoader.php
