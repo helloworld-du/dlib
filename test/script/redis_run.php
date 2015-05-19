@@ -5,7 +5,7 @@
  * Date: 15/5/18
  * Time: 下午6:01
  */
-require __DIR__.'/../../Commen.inc.php';
+require __DIR__.'/../../common.inc.php';
 use dlib\redis\Driver;
 $oRedis = new Driver();
 var_dump($oRedis->set('redis_test1', 'testkadna;ndas;kdnak;'));
