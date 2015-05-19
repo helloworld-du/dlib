@@ -7,3 +7,5 @@ before_script:
   - composer update 1>/dev/null
   -  phpenv config-add php_conf_test.ini
 
+ script:
+   - phpunit test/unit/
