@@ -6,16 +6,15 @@
  * Time: 下午5:41
  */
 return [
+	'default' => [
+		'host' => '127.0.0.1',
+		'port' => '6379',
+		'timeout' => 10,r
+	],
 //	'default' => [
-//		'host' => '127.0.0.1',
-//		'port' => '6379',
+//		'socket' => '/Users/dushengchen/work/var/redis/redis.sock',
 //		'user' => 'xxxxx',
 //		'password' => 'xxxxx',
-//	],
-	'default' => [
-		'socket' => '/Users/dushengchen/work/var/redis/redis.sock',
-		'user' => 'xxxxx',
-		'password' => 'xxxxx',
-		'timeout' => 10,
-	]
+//		'timeout' => 10,
+//	]
 ];
