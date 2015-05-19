@@ -13,3 +13,4 @@ before_script:
 
 script:
   - phpunit --bootstrap Commen.inc.php test/unit/
+  - php test/script/autoLoader.php
