@@ -6,7 +6,7 @@
  * Time: 下午5:52
  */
 define('LIB_ROOT', __DIR__ . '/');
-require 'vendor/autoload.php';
+require LIB_ROOT.'vendor/autoload.php';
 
 
 
