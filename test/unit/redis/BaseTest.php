@@ -5,7 +5,6 @@
  * Date: 15/5/19
  * Time: 上午11:41
  */
-require_once __DIR__ . '/../../../common.inc.php';
 use dlib\redis\Driver;
 
 class BaseTest extends PHPUnit_Framework_TestCase {

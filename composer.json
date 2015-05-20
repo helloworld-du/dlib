@@ -10,7 +10,13 @@
 	  		"email": "dushengchen@gmail.com",
 	  		"homepage": "https://github.com/helloworld-du",
 	  		"role": "Developer"
-		}
+		},
+	  	{
+			"name": "Zheng Kai",
+			"email": "zhengkai@gmail.com",
+			"homepage": "https://soulogic.com/",
+			"role": "Developer"
+	  	}
   	],
 	"autoload": {
 	  	"psr-4": {"dlib\\" : ""}

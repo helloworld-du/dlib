@@ -17,18 +17,16 @@ require LIB_ROOT.'vendor/autoload.php';
 //// to enable searching the include path (eg. for PEAR packages)
 //$loader->setUseIncludePath(true);
 
-
-
-
-spl_autoload_register(function ($class) {
-
-	if (strpos($class, 'dlib\\') === 0) {
-		$class = str_replace('dlib\\', '',$class);
-		$class = str_replace('\\', '/',$class);
-		$sRealPath = LIB_ROOT.str_replace('_', '/',$class).'.php';
-		echo "\nreq: ",$sRealPath,"\t",file_exists($sRealPath),"\n";
-		if (file_exists($sRealPath)) {
-			require $sRealPath;
-		}
-	}
-}, true, true);
+//暂时不需要自己写加载器，直接使用composer中的psr-4加载器
+//spl_autoload_register(function ($class) {
+//
+//	if (strpos($class, 'dlib\\') === 0) {
+//		$class = str_replace('dlib\\', '',$class);
+//		$class = str_replace('\\', '/',$class);
+//		$sRealPath = LIB_ROOT.str_replace('_', '/',$class).'.php';
+//		echo "\nreq: ",$sRealPath,"\t",file_exists($sRealPath),"\n";
+//		if (file_exists($sRealPath)) {
+//			require $sRealPath;
+//		}
+//	}
+//}, true, true);
