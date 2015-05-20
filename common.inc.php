@@ -26,6 +26,7 @@ spl_autoload_register(function ($class) {
 		$class = str_replace('dlib\\', '',$class);
 		$class = str_replace('\\', '/',$class);
 		$sRealPath = LIB_ROOT.str_replace('_', '/',$class).'.php';
+		echo "\nreq: ",$sRealPath,"\t",file_exists($sRealPath),"\n";
 		if (file_exists($sRealPath)) {
 			require $sRealPath;
 		}
