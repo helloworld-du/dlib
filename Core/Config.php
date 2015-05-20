@@ -5,16 +5,16 @@
  * Date: 15/5/18
  * Time: 下午5:50
  */
-namespace dlib\confs;
+namespace Dlib\Core;
 
-class Loader {
+class Config {
 
 	static protected $_sBaseDir;
 	static protected $_cache = [];
 
 	static protected function init () {
 		if (!self::$_sBaseDir) {
-			self::$_sBaseDir = __DIR__.'/';
+			self::$_sBaseDir = __DIR__.'/../Confs/';
 		}
 	}
 	static public function get($sKey) {

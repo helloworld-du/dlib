@@ -19,7 +19,7 @@
 	  	}
   	],
 	"autoload": {
-	  	"psr-4": {"dlib\\" : ""}
+	  	"psr-4": {"Dlib\\" : ""}
 	},
 	"require": {
 		"hassankhan/config": "*"

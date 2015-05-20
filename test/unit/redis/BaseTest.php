@@ -5,7 +5,7 @@
  * Date: 15/5/19
  * Time: 上午11:41
  */
-use dlib\redis\Driver;
+use Dlib\Redis\Driver;
 
 class BaseTest extends PHPUnit_Framework_TestCase {
 

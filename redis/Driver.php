@@ -5,8 +5,7 @@
  * Date: 15/5/18
  * Time: 下午6:49
  */
-namespace dlib\redis;
-use dlib\confs\Loader;
+namespace Dlib\Redis;
 
 class Driver {
 
@@ -25,7 +24,7 @@ class Driver {
 			return $this->_aAddr;
 		}
 		if (is_string($this->_aAddr)) {
-			$conf = Loader::get('redis.'.$this->_aAddr);
+			$conf = \Dlib\Core\Config::get('redis.'.$this->_aAddr);
 			if ($conf && is_array($conf)) {
 				return $this->_aAddr = $conf;
 			}
