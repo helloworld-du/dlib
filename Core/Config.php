@@ -24,10 +24,13 @@ class Config {
 
 	static protected function _get($sKey) {
 		$lPath = explode('.', $sKey, 2);
-		if (isset(self::$_cache[$lPath[0]])) {
+		if (!isset(self::$_cache[$lPath[0]])) {
+			self::$_cache[$lPath[0]] = \Noodlehaus\Config::load(self::$_sBaseDir.$lPath[0].'.php');
+		}
+
+		if (!self::$_cache[$lPath[0]]) {
 			return self::$_cache[$lPath[0]];
 		}
-		self::$_cache[$lPath[0]] = \Noodlehaus\Config::load(self::$_sBaseDir.$lPath[0].'.php');
 		if (count($lPath) === 2) {
 			return self::$_cache[$lPath[0]][$lPath[1]];
 		}
