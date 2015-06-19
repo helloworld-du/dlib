@@ -6,7 +6,7 @@
  * Time: 上午11:41
  */
 
-class ArrayDiffTest extends PHPUnit_Framework_TestCase {
+class ArrayFillTest extends PHPUnit_Framework_TestCase {
 
 	static public $arr1 = [
 		0,1,2,3,4
