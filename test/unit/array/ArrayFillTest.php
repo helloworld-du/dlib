@@ -25,17 +25,6 @@ class ArrayFillTest extends PHPUnit_Framework_TestCase {
 	 * array diff but not list
 	 */
 	public function test1() {
-		$actual = array_diff(0, 1, 1);
-		$this->assertEquals(
-			[1],
-			$actual
-		);
-
-		$actual = array_diff(0, 2, 1);
-		$this->assertEquals(
-			[1, 2],
-			$actual
-		);
 	}
 
 }
