@@ -1,11 +1,11 @@
 #!/usr/bin/env php
 <?php
 require __DIR__ .'/../common.inc.php';
-define('PROJECT_ROOT', __DIR__ . '/../');	//项目的路径
-define('PHP_CS_CHECK_CMD', PROJECT_ROOT.'vendor/bin/phpcs');	//执行检查的命令
-define('AUTO_FIX_CS', true);		//是否自动修复文件
-define('PHP_CS_FIX_CMD', PROJECT_ROOT.'vendor/bin/phpcbf');	//修复的命令
-define('AUTO_GIT_CI', true);		//是否修复完自动提交
+define('PROJECT_ROOT', __DIR__ . '/../');    //项目的路径
+define('PHP_CS_CHECK_CMD', PROJECT_ROOT.'vendor/bin/phpcs');    //执行检查的命令
+define('AUTO_FIX_CS', true);        //是否自动修复文件
+define('PHP_CS_FIX_CMD', PROJECT_ROOT.'vendor/bin/phpcbf');    //修复的命令
+define('AUTO_GIT_CI', true);        //是否修复完自动提交
 define('AUTO_CI_MSG_PRIX', 'CI_WITH_CS_FIXED:');
 
 $argv = $_SERVER['argv'];
@@ -13,82 +13,86 @@ $argv = $_SERVER['argv'];
 $sCIMsg = isset($argv[1]) ? file_get_contents($argv[1]) : "";
 
 if (strpos($sCIMsg, AUTO_CI_MSG_PRIX) === 0) {
-	exit(0);
+    exit(0);
 }
 
 $lChangeFile = git_diff_file(PROJECT_ROOT);
 //过滤掉非php文件，
-$lChangeFile = array_filter($lChangeFile,'filter_by_ext');
+$lChangeFile = array_filter($lChangeFile, 'filter_by_ext');
 
 if(!$lChangeFile) {
-	echo "\n No php file in change list.";
-	exit(0);
+    echo "\n No php file in change list.";
+    exit(0);
 }
 echo "\n PHP file change list:\n", implode("\n", $lChangeFile);
 
 echo "\nPHP code style check:\n";
 $lFailPass = [];
 foreach($lChangeFile as $lFilePath) {
-	$sRealPath = PROJECT_ROOT.'/'.$lFilePath;
-	$retVal = php_cs_Sniffer($sRealPath);
-	if ($retVal) {
-		$lFailPass[] = $sRealPath;
-	} else {
-		echo "STATUS: PASS\n";
-	}
+    $sRealPath = PROJECT_ROOT.'/'.$lFilePath;
+    $retVal = php_cs_Sniffer($sRealPath);
+    if ($retVal) {
+        $lFailPass[] = $sRealPath;
+    } else {
+        echo "STATUS: PASS\n";
+    }
 }
 if (!$lFailPass) {
-	exit(0);
+    exit(0);
 
 }
 echo 'Check error: ',count($lFailPass), "/", count($lChangeFile), "\nSee detail above.";
 
 //自动修复
 if (AUTO_FIX_CS) {
-	echo "\nTry to fix:\n";
-	foreach($lFailPass as $sRealPath) {
-		echo 'Fixing: ', $sRealPath,"\n";
-		$ret = do_php_fix($sRealPath);
-	}
-	$sfileList = implode(' ', $lFailPass);
-	echo "\ngit add: $sfileList\n";
-	system('git add '.$sfileList);
-	echo "\n\ngit diff: $sfileList\n";
-	system('git diff --cached '.$sfileList);
+    echo "\nTry to fix:\n";
+    foreach($lFailPass as $sRealPath) {
+        echo 'Fixing: ', $sRealPath,"\n";
+        $ret = do_php_fix($sRealPath);
+    }
+    $sfileList = implode(' ', $lFailPass);
+    echo "\ngit add: $sfileList\n";
+    system('git add '.$sfileList);
+    echo "\n\ngit diff: $sfileList\n";
+    system('git diff --cached '.$sfileList);
 }
 
 //自动提交
 if (AUTO_FIX_CS && AUTO_GIT_CI) {
-	echo "Auto ci : ";
-	$sfileList = implode(' ', $lFailPass);
-	system('git ci -m"'.AUTO_CI_MSG_PRIX.$sCIMsg.'"');
-	exit(0);
+    echo "Auto ci : ";
+    $sfileList = implode(' ', $lFailPass);
+    system('git ci -m"'.AUTO_CI_MSG_PRIX.$sCIMsg.'"');
+    exit(0);
 }
 
 //exec(PHP_CS_CHECK_CMD.' '.PROJECT_ROOT, $lOutput, $retVal);
 //var_dump($lOutput, $retVal);
 exit(1);
 
-function do_php_fix($sPath) {
-	system(PHP_CS_FIX_CMD.' '.$sPath, $retVal);
-	return $retVal;
+function do_php_fix($sPath) 
+{
+    system(PHP_CS_FIX_CMD.' '.$sPath, $retVal);
+    return $retVal;
 }
 
-function php_cs_Sniffer($sPath) {
-	system(PHP_CS_CHECK_CMD.' '.$sPath, $retVal);
-	return $retVal;
+function php_cs_Sniffer($sPath) 
+{
+    system(PHP_CS_CHECK_CMD.' '.$sPath, $retVal);
+    return $retVal;
 }
 
-function git_diff_file($sPath) {
-	exec('git diff --cached --name-only '.$sPath, $lOutput, $retVal);
-	return $lOutput ?: [];
+function git_diff_file($sPath) 
+{
+    exec('git diff --cached --name-only '.$sPath, $lOutput, $retVal);
+    return $lOutput ?: [];
 }
 //
 //function pre_commit_log($str) {
 //	echo $str,"\n";
 //}
 
-function filter_by_ext($sFileName, $sExt='.php'){
-	$x = preg_match('/(.*)('.$sExt.')$/', $sFileName);
-	return $x;
+function filter_by_ext($sFileName, $sExt='.php')
+{
+    $x = preg_match('/(.*)('.$sExt.')$/', $sFileName);
+    return $x;
 }
