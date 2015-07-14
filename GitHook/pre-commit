@@ -3,11 +3,10 @@
 
 define('PROJECT_ROOT', __DIR__.'/../');    //项目的路径
 define('PHP_CS_CHECK_CMD', PROJECT_ROOT.'/vendor/bin/phpcs');    //执行检查的命令
-define('PHP_CS_RULESET', PROJECT_ROOT.'Giithook/fp-ruleset.xml');        //检查和修复使用的rule set，为空时使用默认的
+define('PHP_CS_RULESET', PROJECT_ROOT.'/Githook/fp-ruleset.xml');        //检查和修复使用的rule set，为空时使用默认的
 define('AUTO_FIX_CS', TRUE);        //是否自动修复文件
 define('PHP_CS_FIX_CMD', PROJECT_ROOT.'/vendor/bin/phpcbf');    //修复的命令
 define('AUTO_GIT_CI', TRUE);        //是否修复完自动提交
-define('AUTO_CI_MSG_PRIX', 'script_ci:');    //填写在ci后的msg中，用来标检查后的ci，可以设置为“”
 
 
 $lDiffFile = gitDiffFile(PROJECT_ROOT);
@@ -17,11 +16,11 @@ $lChangeFile = array_filter(
 	return file_exists(PROJECT_ROOT.'/'.$sFileName) && filterByFileExt($sFileName);
 	}
 );
-
 if(!$lChangeFile) {
 	displayAndSleep('No php file in change list.');
 	exit(0);
 }
+
 //echo "\n\n		PHP file change list:\n", implode("\n", $lChangeFile);
 
 displayAndSleep('PHP code style check:');
@@ -55,9 +54,9 @@ if (AUTO_FIX_CS) {
 
 //自动提交
 if (AUTO_FIX_CS && AUTO_GIT_CI) {
-	displayAndSleep('git checkin:');
+	displayAndSleep('git commit:');
 	$sfileList = implode(' ', $lFailPass);
-	system('git ci --no-verify');
+	system('git commit --no-verify');
 	exit(0);
 }
 
