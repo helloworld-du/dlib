@@ -53,7 +53,7 @@ by dushengchen@gmail.com
 
 ### 1. git钩子
 
-参考 [Git Hook](http://githooks.com/) 或执行Google
+参考 [Git Hook](http://githooks.com/) 或自行Google
 
 
 ### 2.代码检查
