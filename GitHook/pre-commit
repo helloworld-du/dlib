@@ -1,13 +1,18 @@
 #!/usr/bin/env php
 <?php
-
-define('PROJECT_ROOT', __DIR__.'/../');    //项目的路径
+/**
+ * ci时自动检查并尝试修复代码格式
+ * @author dushengchen <dushengchen@funplus.com>
+ * @link https://gist.github.com/helloworld-du/dbff246f1714f75fd4e0
+ */
+define('PROJECT_ROOT', dirname(__DIR__));    //项目的路径
 define('PHP_CS_CHECK_CMD', PROJECT_ROOT.'/vendor/bin/phpcs');    //执行检查的命令
-define('PHP_CS_RULESET', PROJECT_ROOT.'/Githook/fp-ruleset.xml');        //检查和修复使用的rule set，为空时使用默认的
+define('PHP_CS_RULESET', PROJECT_ROOT.'/Giithook/fp-ruleset.xml');        //检查和修复使用的rule set，为空时使用默认的
 define('AUTO_FIX_CS', TRUE);        //是否自动修复文件
 define('PHP_CS_FIX_CMD', PROJECT_ROOT.'/vendor/bin/phpcbf');    //修复的命令
-define('AUTO_GIT_CI', TRUE);        //是否修复完自动提交
-
+define('CI_WHEN_ERROR', TRUE);        //修复后，依然有问题，是否依然提交
+define('SHOW_DETAIL', TRUE);	//是否显示详细
+define('SHOW_NOTICE', TRUE);	//是否给出notice
 
 $lDiffFile = gitDiffFile(PROJECT_ROOT);
 //过滤掉非php文件，
@@ -16,74 +21,117 @@ $lChangeFile = array_filter(
 	return file_exists(PROJECT_ROOT.'/'.$sFileName) && filterByFileExt($sFileName);
 	}
 );
-if(!$lChangeFile) {
+if (!$lChangeFile) {
 	displayAndSleep('No php file in change list.');
 	exit(0);
 }
 
-//echo "\n\n		PHP file change list:\n", implode("\n", $lChangeFile);
+//如果自动修复，就直接先调用phpcbf，再phpcs，看看修复完还有哪些遗留问题，
+//如果不自动修复，就只做phpcs
+if (!AUTO_FIX_CS) {
+	displayTitle('PHP code style check:');
+	$lFailPass = doCsCheck($lChangeFile, SHOW_DETAIL);
 
-displayAndSleep('PHP code style check:');
-$lFailPass = [];
-foreach($lChangeFile as $lFilePath) {
+	if (!$lFailPass) {
+		exit(0);
+	}
+	exit(1);
+}
+
+displayTitle('Begin check and Try to fix:');
+foreach ($lChangeFile as $lFilePath) {
+	echo 'Scanning: ', $lFilePath;
 	$sRealPath = PROJECT_ROOT.'/'.$lFilePath;
-	$retVal = phpCsSniffer($sRealPath);
-	if ($retVal) {
-		$lFailPass[] = $sRealPath;
-	} else {
-		echo "Status: PASS\n";
-	}
+	$ret = fixPhpFile($sRealPath);
+	echo "...DONE\n";
 }
-if (!$lFailPass) {
-	exit(0);
+echo "\n";
+$lFailPass = doCsCheck($lChangeFile, SHOW_DETAIL);
+if (!SHOW_DETAIL) {
+	displayNotice("Wanna see DETAIL, Please open FLAG: SHOW_DETAIL\n");
+} else {
+	displayNotice("Wanna ignore DETAIL? Close FLAG: SHOW_DETAIL\n");
 }
-displayAndSleep("Check summary: error(".count($lFailPass). "/".count($lChangeFile).")");
 
-//自动修复
-if (AUTO_FIX_CS) {
-	displayAndSleep('Try to fix:');
-	foreach($lFailPass as $sRealPath) {
-		echo 'Fixing: ', $sRealPath,"\n";
-		$ret = fixPhpFile($sRealPath);
-	}
-	$sfileList = implode(' ', $lDiffFile);
-	displayAndSleep('git add AND diff');
-	system('git add --all '.$sfileList);
-	system('git diff --cached '.$sfileList);
-}
+
+$sfileList = implode(' ', $lDiffFile);
+displayTitle('ADD to git');
+echo "Files:\nADD: ",implode("\nADD: ", $lDiffFile),"\n";
+system('git add --all '.$sfileList);
 
 //自动提交
-if (AUTO_FIX_CS && AUTO_GIT_CI) {
-	displayAndSleep('git commit:');
-	$sfileList = implode(' ', $lFailPass);
-	system('git commit --no-verify');
+
+if (!$lFailPass || CI_WHEN_ERROR) {
+	displayTitle('Commit to git');
+	echo "Files:\nCI: ",implode("\nCI: ", $lDiffFile),"\n";
+	$lFailPass && displayNotice("Stop CI? Please open FLAG: SHOW_DETAIL\n");
 	exit(0);
 }
 
-//exec(PHP_CS_CHECK_CMD.' '.PROJECT_ROOT, $lOutput, $retVal);
-//var_dump($lOutput, $retVal);
 exit(1);
-function displayAndSleep($str) {
-	echo "\n\n\t\t",$str,"\n\n";
-	sleep(1);
+
+function displayTitle($str) {
+	static $iNum = 0;
+	$iNum++;
+	displayAndSleep("${iNum}. ${str}", 'green');
 }
 
+function displayAndSleep($str, $color = 'white') {
+	$ret = colorEcho("\n\n\t\t".$str."\n", $color);
+	sleep(1);
+	return $ret;
+}
 
-function fixPhpFile($sPath) {
+function displayNotice($str) {
+	if (!SHOW_NOTICE) {
+		return TRUE;
+	}
+	return colorEcho("Notice: ".$str, 'yellow');
+}
 
-	$cmd = PHP_CS_FIX_CMD.
+function doCsCheck($lFileList, $bShowDetail = FALSE) {
+	$lFailPass = [];
+	foreach($lFileList as $lFilePath) {
+		if (!$bShowDetail) {
+			echo 'Cheaking: ', $lFilePath;
+		}
+		$sRealPath = PROJECT_ROOT.'/'.$lFilePath;
+		$retVal = phpCsSniffer($sRealPath, $bShowDetail);
+		if ($retVal) {
+			$lFailPass[] = $lFilePath;
+		}
+		if (!$bShowDetail) {
+			echo $retVal ? "...NO\n" : "...YES\n";
+		}
+	}
+	displayAndSleep("Check summary: error(".count($lFailPass). "/".count($lFileList).")", 'violet');
+	return $lFailPass;
+}
+
+function fixPhpFile($sPath, $bShowDetail = FALSE) {
+
+	$sCmd = PHP_CS_FIX_CMD.
 		(PHP_CS_RULESET ? ' --standard='.PHP_CS_RULESET.' ' : ' ')
 		.$sPath;
-	system($cmd, $retVal);
+	if ($bShowDetail) {
+		system($sCmd, $retVal);
+	} else {
+		exec($sCmd, $lOutput, $retVal);
+	}
 	return $retVal;
 }
 
-function phpCsSniffer($sPath) {
+function phpCsSniffer($sPath, $bShowDetail = FALSE) {
 
-	$cmd = PHP_CS_CHECK_CMD.
+	$sCmd = PHP_CS_CHECK_CMD.
 		(PHP_CS_RULESET ? ' --standard='.PHP_CS_RULESET.' ' : ' ')
 		.$sPath;
-	system($cmd, $retVal);
+	if ($bShowDetail) {
+		system($sCmd, $retVal);
+	} else {
+		exec($sCmd, $lOutput, $retVal);
+	}
+
 	return $retVal;
 }
 
@@ -96,4 +144,24 @@ function gitDiffFile($sPath) {
 function filterByFileExt($sFileName, $sExt = '.php') {
 	$x = preg_match('/(.*)('.$sExt.')$/', $sFileName);
 	return $x;
+}
+
+
+function colorEcho($sContent, $color = 'white') {
+
+	static $lColor = [
+		'black' => '30',
+		'red' => '31',
+		'green' => '32',
+		'yellow' => '33',
+		'blue' => '34',
+		'violet' => '35',
+		'cyan' => '36',
+		'white' => '37',
+	];
+
+	$color = isset($lColor[$color]) ? $lColor[$color] : 37;
+	$sCmd = "echo \"\033[".$color."m".$sContent." \033[0m\"";
+	passthru($sCmd);
+	return TRUE;
 }
