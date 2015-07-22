@@ -18,7 +18,7 @@ by dushengchen@gmail.com
     YOUR_PROJECT_ROOT/
       |—— pre-commit
       |——ruleset.xml
-      |—— vend0r/
+      |—— vendor/
             |——bin/
                 |——phpcs
                 |——phpcbf
@@ -48,10 +48,16 @@ by dushengchen@gmail.com
     define('SHOW_NOTICE', TRUE);    //是否给出notice
 
 
-关于代码检查与修复
-==================
-可以参考[PHP_CodeSniffer](https://github.com/squizlabs/PHP_CodeSniffer)，自行定义代码样式的要求。  
-本钩子使用PHP_CodeSniffer做代码检查，请提前配置好PHP_CodeSniffer和PHP_CodeSniffer所需的rule set
-配置好环境后，参考上面的钩子配置部分，配置钩子
+参考
+====
+
+### 1. git钩子
+
+参考 [Git Hook](http://githooks.com/) 或执行Google
+
+
+### 2.代码检查
+
+本钩子使用[PHP_CodeSniffer](https://github.com/squizlabs/PHP_CodeSniffer)做代码检查，需要提前配置好PHP_CodeSniffer和PHP_CodeSniffer所需的rule set。
 
 
